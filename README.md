@@ -12,37 +12,9 @@ Before run this tutorial make sure you have the required programs installed
 
 # steps to deploy
 
-## private image repository
-K3d cluster should deploy private images from a public or private repository, here we will deploy a private one to use with k3d cluster. Open __0-private-registry__ folder and run the following commands:
+## Private image repository
 
-use the following command to create repository credentials
-``` shell
-cd auth && make create-login
-
-```
-
-use this command to create repository container
-``` shell
-docker compose up -d
-
-```
-
-wait for the container up... the container should produce the following logs:
-
-``` log
-time="2022-12-31T03:43:22.4082266Z" level=warning msg="No HTTP secret provided - generated random secret. This may cause problems with uploads if multiple registries are behind a load-balancer. To provide a shared secret, fill in http.secret in the configuration file or set the REGISTRY_HTTP_SECRET environment variable." go.version=go1.16.15 instance.id=5482d24a-c04b-487c-a87a-eb6ab7e84ad6 service=registry version="v2.8.1+unknown" 
-time="2022-12-31T03:43:22.4082941Z" level=info msg="redis not configured" go.version=go1.16.15 instance.id=5482d24a-c04b-487c-a87a-eb6ab7e84ad6 service=registry version="v2.8.1+unknown" 
-time="2022-12-31T03:43:22.4084511Z" level=info msg="Starting upload purge in 58m0s" go.version=go1.16.15 instance.id=5482d24a-c04b-487c-a87a-eb6ab7e84ad6 service=registry version="v2.8.1+unknown" 
-time="2022-12-31T03:43:22.4150913Z" level=info msg="using inmemory blob descriptor cache" go.version=go1.16.15 instance.id=5482d24a-c04b-487c-a87a-eb6ab7e84ad6 service=registry version="v2.8.1+unknown" 
-time="2022-12-31T03:43:22.4153017Z" level=info msg="listening on [::]:5000" go.version=go1.16.15 instance.id=5482d24a-c04b-487c-a87a-eb6ab7e84ad6 service=registry version="v2.8.1+unknown" 
-```
-
-Then bind the future k3d networking with the current container:
-
-``` shell
-make register
-```
-
+See __0 - private-registry__ folder for details.
 ## K3d Cluster
 
 To deploy a k3d cluster enter on __1-cluster__ and run the following command:

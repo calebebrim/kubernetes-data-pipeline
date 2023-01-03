@@ -1,7 +1,0 @@
-# Certificate generation
-
-
-## requirements
-
-- openssl
-

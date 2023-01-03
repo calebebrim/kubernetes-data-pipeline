@@ -5,7 +5,7 @@
 # 	C:\Users\Calebe Brim\AppData\Roaming\Apache24\bin
 #
 # É necessário registrar essa pasta no path do windows 
-
+host = localhost:5000
 create-login:
 	htpasswd -cBb registry.password admin admin
 
