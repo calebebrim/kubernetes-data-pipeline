@@ -1,0 +1,10 @@
+mirrors:
+  k3d-dev-repo.localhost:
+    endpoint:
+      - "http://k3d-dev-repo.localhost:5000"
+
+configs:
+  k3d-dev-repo.localhost:
+    auth:
+      username: admin
+      password: admin
