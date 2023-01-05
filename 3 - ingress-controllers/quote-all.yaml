@@ -36,7 +36,6 @@ spec:
   selector:
     app: quote
 ---
-# see 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

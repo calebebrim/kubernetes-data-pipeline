@@ -1,0 +1,15 @@
+grafana:
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned-issuer
+      kubernetes.io/ingress.class: nginx
+
+    hosts:
+      - grafana.brimdataservices.com.br
+    path: "/"
+    tls:
+    - hosts:
+      - grafana.brimdataservices.com.br
+    secretName: grafana-metrics-secret
