@@ -29,10 +29,10 @@ uninstall:
 
 deploy-kafka-cluster:
 	kubectl apply -n $(namespace) -f ./configuration
-	kubectl get kafka
+	kubectl get kafka -n $(namespace)
 
 delete-kafka-cluster:
-	kubectl delete -n $(namespace) -f ./configuration -set 
+	kubectl delete -n $(namespace) -f ./configuration
 
 show-kafka-cluster:
 	kubectl get pods -n $(namespace)
