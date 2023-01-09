@@ -7,16 +7,17 @@ add-repo:
 	helm repo update
 	
 
-#install it! (I have used strimzi-kafka as the release name)
+# install it! (I have used strimzi-kafka as the release name)
+# >>>>>> https://dzone.com/articles/grafana-and-prometheus-setup-with-strimzi-aka-kafk
 install:
 	-kubectl create namespace $(namespace)
 # Installation with helm
-# 	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
-# 	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
-# 	kubectl get pods -l=name=strimzi-cluster-operator
-# 	kubectl get crd | grep strimzi
+	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
+	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
+	kubectl get pods -l=name=strimzi-cluster-operator -n $(namespace)
+	kubectl get crd -n $(namespace) | grep strimzi
 # Instalation with kubectl
-	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
+# 	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
 
 uninstall:
 # Uninstalls with helm
