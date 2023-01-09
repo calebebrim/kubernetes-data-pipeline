@@ -35,9 +35,9 @@ delete-kafka-cluster:
 	kubectl delete -n $(namespace) -f ./configuration
 
 show-kafka-cluster:
-	kubectl get pods -n $(namespace)
-	kubectl get kafka -n $(namespace)
-	kubectl get services -n $(namespace)
+	@kubectl get kafka -n $(namespace)
+	@kubectl get services -n $(namespace)
+	@kubectl get pods -n $(namespace)
 
 describe-kafka-cluster:
 	kubectl describe kafka my-cluster -n $(namespace)
