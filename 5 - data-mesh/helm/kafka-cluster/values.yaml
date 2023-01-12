@@ -1,0 +1,13 @@
+zookeeper:
+  replicas:  3
+
+kafka:
+  replicas:  3
+  storage:
+    type: jbod
+    volumes:
+    - id: 0
+      type: persistent-claim
+      size: 100Gi
+      deleteClaim: false
+    

@@ -1,0 +1,4 @@
+
+kafkaCluster:
+  namespace:
+    name: datamesh

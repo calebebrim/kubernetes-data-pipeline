@@ -1,5 +1,9 @@
+operatorRelease = strimzi-kafka
+clusterRelease = kafka-cluster
 
-namespace = kafka
+# should match the helm values files
+clusterNs = datamesh
+operatorNs = kafka
 
 # add helm chart repo for Strimzi
 add-repo:
@@ -9,46 +13,44 @@ add-repo:
 
 # install it! (I have used strimzi-kafka as the release name)
 # >>>>>> https://dzone.com/articles/grafana-and-prometheus-setup-with-strimzi-aka-kafk
+
+op:
+	helm upgrade --install $(operatorRelease) -n $(operatorNs) --create-namespace helm/strimzi-operator-installer/ 
+
+op-validation:
+	helm upgrade --install $(operatorRelease) -n $(operatorNs) --create-namespace helm/strimzi-operator-installer/ --dry-run
+
+rmop:
+	helm delete $(operatorRelease) -n $(operatorNs)
+	- kubectl delete namespace $(operatorNs)
+
+
 install:
-	-kubectl create namespace $(namespace)
-# Installation with helm
-	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
-	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
-	kubectl get pods -l=name=strimzi-cluster-operator -n $(namespace)
-	kubectl get crd -n $(namespace) | grep strimzi
-# Instalation with kubectl
-# 	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
-
-uninstall:
-# Uninstalls with helm
-#	helm uninstall -n $(namespace) strimzi-kafka
-# Uninstalls with kubectl
-	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
-	-kubectl delete namespace $(namespace)
+	helm upgrade --install $(clusterRelease) --create-namespace -n $(clusterNs) helm/kafka-cluster
 
 
+validation:
+	helm upgrade --install $(clusterRelease) --create-namespace -n $(clusterNs) helm/kafka-cluster --dry-run --debug
 
-deploy-kafka-cluster:
-	kubectl apply -n $(namespace) -f ./configuration
-	kubectl get kafka -n $(namespace)
 
-delete-kafka-cluster:
-	kubectl delete -n $(namespace) -f ./configuration
+delete:
+	helm delete $(clusterRelease) -n $(clusterNs)
+	kubectl delete namespace -n $(clusterNs)
 
 show-kafka-cluster:
-	kubectl get pods -n $(namespace)
-	kubectl get kafka -n $(namespace)
-	kubectl get services -n $(namespace)
+	kubectl get pods -n $(clusterNs)
+	kubectl get kafka -n $(clusterNs)
+	kubectl get services -n $(clusterNs)
 
 describe-kafka-cluster:
-	kubectl describe kafka my-cluster -n $(namespace)
+	kubectl describe kafka my-cluster -n $(clusterNs)
 
 
 create-topics:
-	kubectl apply -f ./topics -n $(namespace)
+	kubectl apply -f ./topics -n $(clusterNs)
 
 list-topics:
-	kubectl get kafkatopic -n $(namespace)
+	kubectl get kafkatopic -n $(clusterNs)
 
 
 #
