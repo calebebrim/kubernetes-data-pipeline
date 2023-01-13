@@ -10,9 +10,9 @@ grafana:
       - grafana.brimdataservices.com.br
     path: "/"
     tls:
-    - hosts:
-      - grafana.brimdataservices.com.br
-    secretName: grafana-metrics-secret
+      - hosts:
+        - grafana.brimdataservices.com.br
+        secretName: grafana-metrics-secret
     
 prometheus:
   prometheusSpec:
