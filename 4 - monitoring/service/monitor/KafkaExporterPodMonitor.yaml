@@ -1,0 +1,18 @@
+# https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMonitor
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor 
+metadata:
+  name: prometheus-pod-monitor-kafka-exporter
+  labels:
+    k8s-app: kafka-exporter
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/name: data-mesh-kafka-exporter
+  podMetricsEndpoints: #https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMetricsEndpoint
+    - port: tcp-prometheus
+      path: /metrics
+      interval: 15s
+  namespaceSelector:
+    matchNames:
+    - kafka

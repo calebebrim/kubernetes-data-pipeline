@@ -22,3 +22,9 @@ remove:
 	kubectl delete crd prometheusrules.monitoring.coreos.com -n ${namespace}
 	kubectl delete crd servicemonitors.monitoring.coreos.com -n ${namespace}
 	kubectl delete crd thanosrulers.monitoring.coreos.com -n ${namespace}
+
+servicemonitors:
+	kubectl apply -f service/monitor -n ${namespace}
+
+rmservicemonitors:
+	kubectl delete -f service/monitor -n ${namespace}

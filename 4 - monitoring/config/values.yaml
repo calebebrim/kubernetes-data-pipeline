@@ -13,3 +13,11 @@ grafana:
     - hosts:
       - grafana.brimdataservices.com.br
     secretName: grafana-metrics-secret
+    
+prometheus:
+  prometheusSpec:
+    podMonitorSelector:
+      matchLabels:
+        k8s-app: kafka-exporter
+    # podMonitorNamespaceSelector:
+    #   - monitoring
