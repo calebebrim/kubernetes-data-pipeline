@@ -4,6 +4,7 @@ kind: PodMonitor
 metadata:
   name: prometheus-pod-monitor-kafka-exporter
   labels:
+    app: strimzi
     k8s-app: kafka-exporter
 spec:
   selector:
@@ -16,3 +17,89 @@ spec:
   namespaceSelector:
     matchNames:
     - kafka
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cluster-operator-metrics
+  labels:
+    k8s-app: kafka-exporter
+spec:
+  selector:
+    matchLabels:
+      app: strimzi
+      strimzi.io/kind: cluster-operator
+  podMetricsEndpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+  namespaceSelector:
+    matchNames:
+    - kafka
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: entity-operator-metrics
+  labels:
+    app: strimzi
+    k8s-app: kafka-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: entity-operator
+  podMetricsEndpoints:
+  - path: /metrics
+    port: healthcheck
+  namespaceSelector:
+    matchNames:
+    - kafka
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kafka-resources-metrics
+  labels:
+    app: strimzi
+    k8s-app: kafka-exporter
+spec:
+  selector:
+    matchExpressions:
+      - key: "strimzi.io/kind"
+        operator: In
+        values: ["Kafka", "KafkaConnect", "KafkaMirrorMaker", "KafkaMirrorMaker2"]
+  namespaceSelector:
+    matchNames:
+    - kafka
+  podMetricsEndpoints:
+  - path: /metrics
+    port: tcp-prometheus
+    relabelings:
+    - separator: ;
+      regex: __meta_kubernetes_pod_label_(strimzi_io_.+)
+      replacement: $1
+      action: labelmap
+    - sourceLabels: [__meta_kubernetes_namespace]
+      separator: ;
+      regex: (.*)
+      targetLabel: namespace
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_pod_name]
+      separator: ;
+      regex: (.*)
+      targetLabel: kubernetes_pod_name
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_pod_node_name]
+      separator: ;
+      regex: (.*)
+      targetLabel: node_name
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_pod_host_ip]
+      separator: ;
+      regex: (.*)
+      targetLabel: node_ip
+      replacement: $1
+      action: replace
