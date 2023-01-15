@@ -1,22 +1,22 @@
-# https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMonitor
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor 
-metadata:
-  name: prometheus-pod-monitor-kafka-exporter
-  labels:
-    app: strimzi
-    k8s-app: kafka-exporter
-spec:
-  selector:
-    matchLabels:
-      strimzi.io/name: data-mesh-kafka-exporter
-  podMetricsEndpoints: #https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMetricsEndpoint
-    - port: tcp-prometheus
-      path: /metrics
-      interval: 15s
-  namespaceSelector:
-    matchNames:
-    - kafka
+# # https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMonitor
+# apiVersion: monitoring.coreos.com/v1
+# kind: PodMonitor 
+# metadata:
+#   name: prometheus-pod-monitor-kafka-exporter
+#   labels:
+#     app: strimzi
+#     k8s-app: kafka-exporter
+# spec:
+#   selector:
+#     matchLabels:
+#       strimzi.io/name: data-mesh-kafka-exporter
+#   podMetricsEndpoints: #https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.PodMetricsEndpoint
+#     - port: tcp-prometheus
+#       path: /metrics
+#       interval: 15s
+#   namespaceSelector:
+#     matchNames:
+#     - kafka
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -32,7 +32,7 @@ spec:
   podMetricsEndpoints:
   - port: http
     path: /metrics
-    interval: 15s
+    interval: 60s
   namespaceSelector:
     matchNames:
     - kafka
@@ -51,6 +51,8 @@ spec:
   podMetricsEndpoints:
   - path: /metrics
     port: healthcheck
+    interval: 60s
+
   namespaceSelector:
     matchNames:
     - kafka
@@ -74,6 +76,7 @@ spec:
   podMetricsEndpoints:
   - path: /metrics
     port: tcp-prometheus
+    interval: 60s
     relabelings:
     - separator: ;
       regex: __meta_kubernetes_pod_label_(strimzi_io_.+)
