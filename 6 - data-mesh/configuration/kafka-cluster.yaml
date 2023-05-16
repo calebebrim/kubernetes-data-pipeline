@@ -6,6 +6,16 @@ spec:
   kafka:
     version: 3.4.0
     replicas: 3
+    resources: # (4)
+      requests:
+        memory: 1Gi
+        cpu: "1"
+      limits:
+        memory: 1Gi
+        cpu: "1"
+    jvmOptions:
+      -Xms: 512m
+      -Xmx: 1024m
     listeners:
       - name: plain
         port: 9092
@@ -45,6 +55,16 @@ spec:
     #       name: kafka-metrics
     #       key: kafka-metrics-config.yml
   zookeeper:
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: "1"
+      limits:
+        memory: 1Gi
+        cpu: "1"
+    jvmOptions:
+      -Xms: 200m
+      -Xmx: 1024m
     replicas: 3
     readinessProbe:
       initialDelaySeconds: 15
