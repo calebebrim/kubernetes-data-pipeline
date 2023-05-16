@@ -12,11 +12,11 @@ install:
 	-kubectl create namespace $(namespace)
 # Installation with helm
 # 	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
-# 	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
 # 	kubectl get pods -l=name=strimzi-cluster-operator
 # 	kubectl get crd | grep strimzi
 # Instalation with kubectl
 	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
+	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
 
 uninstall:
 # Uninstalls with helm
