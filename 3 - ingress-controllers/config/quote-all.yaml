@@ -17,9 +17,10 @@ spec:
       containers:
         - name: backend
           # used with docker io repository
-          # image: docker.io/datawire/quote:0.4.1
+          image: docker.io/datawire/quote:0.4.1
+          
           # used with local repository
-          image: k3d-dev-repo.localhost/datawire/quote:0.4.1
+          # image: k3d-dev-repo.localhost/datawire/quote:0.4.1
           ports:
             - containerPort: 8080
 ---

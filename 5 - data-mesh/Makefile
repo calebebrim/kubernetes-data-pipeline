@@ -30,6 +30,8 @@ uninstall:
 deploy-kafka-cluster:
 	kubectl apply -n $(namespace) -f ./configuration
 	kubectl get kafka -n $(namespace)
+# other deployments as ksql
+	kubectl get Deployment -n $(namespace)
 
 delete-kafka-cluster:
 	kubectl delete -n $(namespace) -f ./configuration
@@ -38,9 +40,10 @@ show-kafka-cluster:
 	kubectl get pods -n $(namespace)
 	kubectl get kafka -n $(namespace)
 	kubectl get services -n $(namespace)
+	kubectl get Deployment -n $(namespace)
 
 describe-kafka-cluster:
-	kubectl describe kafka my-cluster -n $(namespace)
+	kubectl describe kafka data-mesh -n $(namespace)
 
 
 create-topics:
