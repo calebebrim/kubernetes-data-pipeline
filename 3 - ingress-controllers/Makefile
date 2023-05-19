@@ -9,7 +9,10 @@ add-repo:
 
 install:
 #https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
-	helm upgrade --install ingress-nginx nginx-stable/nginx-ingress -n $(namespace) -f ./config/values.yaml
+	helm upgrade \
+		--install ingress-nginx nginx-stable/nginx-ingress \
+		-n $(namespace) \
+		-f ./config/values.yaml
 
 remove:
 	helm delete ingress-nginx -n $(namespace)
@@ -18,7 +21,7 @@ remove:
 # test with http
 # the domain should be added to the hosts file
 deploy-quote:
-	kubectl apply -n $(namespace) -f ./config/quote-all.yaml
+	kubectl apply -n $(namespace) -f ./quote-service
 
 delete-quote:
-	kubectl delete -n $(namespace) -f ./config/quote-all.yaml
+	kubectl delete -n $(namespace) -f ./quote-service

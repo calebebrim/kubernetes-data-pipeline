@@ -79,16 +79,19 @@ start:
 # volume-agent-mount-path=/var/lib/rancher/k3s/storage/
 create-cluster: 
 	k3d cluster create $(cluster-name) \
+		--kubeconfig-switch-context \
 		--verbose \
 		--api-port $(api-port) \
 		--volume "$(volume):$(volume-agent-mount-path)@agent:*" \
 		--port "$(http-port):80@loadbalancer" \
 		--port "$(https-port):443@loadbalancer" \
-		--k3s-arg "--disable=traefik@server:*" \
+		--k3s-arg "--disable=traefik@server:0" \
 		--servers $(servers) \
 		--agents $(agents) \
-		--image rancher/k3s:v1.21.2-k3s1 \
-		--registry-config "./registries.yaml"
+		--image rancher/k3s:v1.22.7-k3s1 \
+		--registry-config "./registries.yaml" \
+		--timeout 180s \
+		--wait
 #		--k3s-server-arg "--no-deploy=traefik" \
 #		--registry-use http://k3d-dev-repo.localhost:5000
 #		--registry-create \

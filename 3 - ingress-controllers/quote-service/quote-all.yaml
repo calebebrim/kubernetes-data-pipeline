@@ -47,7 +47,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
-  ingressClassName: nginx
+  # ingressClassName: nginx
   tls:
     - hosts:
       - quote.brimdataservices.com.br
