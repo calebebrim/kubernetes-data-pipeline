@@ -1,4 +1,4 @@
-ksqlpodname = "$(kubectl get pods -n kafka -o jsonpath='{.items[0].metadata.name}' --selector=app=ksqldb-server)"
+export namespace=data-mesh
+export ksqlpodname="$(kubectl get pods -n $namespace -o jsonpath='{.items[0].metadata.name}' --selector=app=ksqldb-server)"
 
-
-kubectl exec $ksqlpodname -n kafka -i -t -- bash ksql
+kubectl exec $ksqlpodname -n $namespace -i -t -- bash ksql
