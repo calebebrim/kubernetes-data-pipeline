@@ -1,5 +1,5 @@
 
-namespace = kafka
+namespace = data-mesh
 
 # add helm chart repo for Strimzi
 add-repo:
@@ -28,19 +28,21 @@ uninstall:
 
 
 deploy-kafka-cluster:
-	kubectl apply -n $(namespace) -f ./configuration
+	kubectl apply -n $(namespace) -f ./configuration/kafka
+	kubectl apply -n $(namespace) -f ./configuration/ksql
 	kubectl get kafka -n $(namespace)
 # other deployments as ksql
 	kubectl get Deployment -n $(namespace)
 
 delete-kafka-cluster:
-	kubectl delete -n $(namespace) -f ./configuration
+	-kubectl delete -n $(namespace) -f ./configuration/kafka
+	-kubectl delete -n $(namespace) -f ./configuration/ksql
 
 show-kafka-cluster:
-	kubectl get pods -n $(namespace)
-	kubectl get kafka -n $(namespace)
-	kubectl get services -n $(namespace)
-	kubectl get Deployment -n $(namespace)
+	-kubectl get pods -n $(namespace)
+	-kubectl get kafka -n $(namespace)
+	-kubectl get services -n $(namespace)
+	-kubectl get Deployment -n $(namespace)
 
 describe-kafka-cluster:
 	kubectl describe kafka data-mesh -n $(namespace)
@@ -58,3 +60,11 @@ list-topics:
 #... I need to continue here: https://www.infoq.com/articles/strimzi-the-gitops-way/
 #
 #
+
+helm-install: 
+	-kubectl create namespace $(namespace)
+	helm upgrade --install kafka-operator ./strimzi-kafka-operator -n $(namespace) --values ./helm/values.yaml
+
+helm-uninstall: delete-kafka-cluster
+	helm uninstall kafka-ecosystem -n $(namespace)
+	kubectl delete namespace $(namespace)
