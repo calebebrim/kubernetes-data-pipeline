@@ -1,0 +1,12 @@
+# Reference: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+
+global:
+  additionalPodMonitors: []
+
+grafana: 
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.brimdataservices.com.br
