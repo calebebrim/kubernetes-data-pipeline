@@ -49,9 +49,9 @@ metadata:
 spec:
   # ingressClassName: nginx
   tls:
-    - hosts:
-      - quote.brimdataservices.com.br
-      secretName: ingress-quote-certificate
+    - secretName: ingress-quote-certificate
+      hosts:
+        - quote.brimdataservices.com.br
   rules:
     - host: quote.brimdataservices.com.br
       http:

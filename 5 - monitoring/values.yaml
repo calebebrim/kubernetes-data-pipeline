@@ -1,12 +1,22 @@
 # Reference: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 
-global:
-  additionalPodMonitors: []
-
 grafana: 
   adminPassword: prom-operator
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned-issuer
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
     hosts:
       - grafana.brimdataservices.com.br
+    tls:
+      - secretName: grafana-general-tls
+        hosts:
+        - quote.brimdataservices.com.br
+
+global:
+  additionalPodMonitors: []
+  
+    

@@ -8,8 +8,9 @@ add-repo:
 	
 
 #install it! (I have used strimzi-kafka as the release name)
-install:
-	-kubectl create namespace $(namespace)
+install-operator:
+#	-kubectl create namespace $(namespace)
+	-kubectl apply -f strimzi.ns.yaml
 # Installation with helm
 # 	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
 # 	kubectl get pods -l=name=strimzi-cluster-operator
@@ -18,7 +19,7 @@ install:
 	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
 	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
 
-uninstall:
+uninstall-operator:
 # Uninstalls with helm
 #	helm uninstall -n $(namespace) strimzi-kafka
 # Uninstalls with kubectl

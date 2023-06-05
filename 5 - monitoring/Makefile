@@ -1,56 +1,64 @@
 
 releasename = prometheus
+# do not change the namespace
 namespace = monitoring
 
 add-repo:
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo update
 
-namespace:
-	-kubectl create namespace ${namespace}
+create-namespace:
+	-kubectl apply -f ./prometheus/namespace.yaml
+
+delete-namespace:
+	-kubectl delete -f ./prometheus/namespace.yaml
 
 
-install-kubestack: namespace
-	-helm upgrade --install ${releasename}-stack \
-		-n ${namespace} prometheus-community/kube-prometheus-stack \
-		--values ./values.yaml
-	
+install-crds:
+	kubectl apply --server-side -f ./prometheus/prometheus-operator-crd-full -n ${namespace}
+	kubectl get crds -n $(namespace)
 
-install-crds: namespace
-	-helm upgrade --install ${releasename}-crds -n ${namespace} prometheus-community/prometheus-operator-crds
-
- 
-install-prometheus: install-crds
-# install: 
-# - prometheus server
-# - prometheus alert manager
-# - kube state metrics
-# - prometheus node exporter
-	-helm upgrade --install $(releasename) -n ${namespace} prometheus-community/prometheus 
-
-delete-prometheus: 
-	-helm uninstall $(releasename) -n ${namespace}
-	
-	
 remove-crds:
-	-helm uninstall ${releasename}-crds -n ${namespace}
-
-remove: delete-prometheus remove-crds
-	-kubectl delete crd alertmanagerconfigs.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd alertmanagers.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd podmonitors.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd probes.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd prometheuses.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd prometheusrules.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd servicemonitors.monitoring.coreos.com -n ${namespace}
-	-kubectl delete crd thanosrulers.monitoring.coreos.com -n ${namespace}
+	kubectl delete -f ./prometheus/prometheus-operator-crd-full -n ${namespace}
+	
+install-rbac:
+	kubectl apply --server-side -R -f ./prometheus/rbac -n ${namespace}
+	
+remove-rbac:
+	kubectl delete -f ./prometheus/rbac -n ${namespace}
 
 
-podmonitors:
-	kubectl apply -R -f service/monitor -n ${namespace}
+install-operator:
+	kubectl apply --server-side -R -f ./prometheus/prometheus-operator -n ${namespace}
 
-rmpodmonitors:
-	kubectl delete -R -f service/monitor -n ${namespace}
+remove-operator:
+	kubectl delete --server-side -R -f ./prometheus/prometheus-operator -n ${namespace}
+
+install-prometheus:
+	kubectl apply --server-side -R -f ./prometheus/prometheus -n ${namespace}
+
+remove-prometheus:
+	kubectl delete --server-side -R -f ./prometheus/prometheus -n ${namespace}
+
+
+
+
+
+
+install: create-namespace install-crds install-rbac install-operator install-prometheus
+remove: remove-prometheus remove-operator remove-rbac remove-crds delete-namespace  
+	
+
+install-demoapp:
+	kubectl apply -R --server-side -f ./prometheus/test/staging.ns.yaml
+	kubectl apply -R --server-side -f ./prometheus/test
+	
+remove-demoapp:
+	kubectl delete -R -f ./prometheus/test
+	kubectl delete -R -f ./prometheus/test/staging.ns.yaml
+	
+
+
 
 
 

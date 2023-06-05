@@ -5,7 +5,7 @@ add-repo:
 	helm repo update
 
 install:
-	helm install \
+	helm upgrade --install \
 		cert-manager jetstack/cert-manager \
 		--namespace $(namespace) \
 		--create-namespace \
@@ -20,4 +20,17 @@ install:
 remove:
 	-helm uninstall -n $(namespace) cert-manager
 	-kubectl delete -n $(namespace) -f self-signed-issuer.yml
+
+
+create-secret:
+	openssl genrsa -out ca.key 2048
+	openssl req -x509 \
+		-new -nodes  \
+		-days 365 \
+		-key ca.key \
+		-out ca.crt \
+		-subj "/CN=brimdataservices.com.br"
 	
+	kubectl create secret tls brimdataservices \
+		--key ca.key \
+		--cert ca.crt

@@ -17,4 +17,4 @@ fist add the repository of certificate manager helm. and then install the certif
     make install
 ```
 
-Onde you have the repository of certificate manager added, you don't need to add it again.
+Once you have the repository of certificate manager added, you don't need to add it again.
