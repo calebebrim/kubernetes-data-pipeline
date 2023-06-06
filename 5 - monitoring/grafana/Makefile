@@ -14,6 +14,8 @@ install:
 		--version $(version) \
 		--values values.$(version).yaml
 
+	
+
 get-password:
 	   kubectl get secret --namespace $(namespace) $(release) -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 
