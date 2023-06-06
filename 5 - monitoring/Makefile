@@ -36,6 +36,7 @@ remove-operator:
 
 install-prometheus:
 	kubectl apply --server-side -R -f ./prometheus/prometheus -n ${namespace}
+	echo "To add prometheus in the grafana use http://prometheus-operated.monitoring.svc.cluster.local:9090 url"
 
 remove-prometheus:
 	kubectl delete --server-side -R -f ./prometheus/prometheus -n ${namespace}
