@@ -1,9 +1,64 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
+  name: cluster-operator-metrics
+  labels:
+    app: strimzi
+    prometheus: main
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/kind: cluster-operator
+  namespaceSelector:
+    matchNames:
+      - strimzi-kafka
+  podMetricsEndpoints:
+  - path: /metrics
+    port: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: entity-operator-metrics
+  labels:
+    app: strimzi
+    prometheus: main
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: entity-operator
+  namespaceSelector:
+    matchNames:
+      - strimzi-kafka
+  podMetricsEndpoints:
+  - path: /metrics
+    port: healthcheck
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: bridge-metrics
+  labels:
+    app: strimzi
+    prometheus: main
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/kind: KafkaBridge
+  namespaceSelector:
+    matchNames:
+      - strimzi-kafka
+  podMetricsEndpoints:
+  - path: /metrics
+    port: rest-api
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
   name: kafka-resources-metrics
   labels:
     app: strimzi
+    prometheus: main
 spec:
   selector:
     matchExpressions:
@@ -12,7 +67,7 @@ spec:
         values: ["Kafka", "KafkaConnect", "KafkaMirrorMaker", "KafkaMirrorMaker2"]
   namespaceSelector:
     matchNames:
-      - data-mesh
+      - strimzi-kafka
   podMetricsEndpoints:
   - path: /metrics
     port: tcp-prometheus

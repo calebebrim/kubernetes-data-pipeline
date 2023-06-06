@@ -1,5 +1,6 @@
 
-namespace = data-mesh
+operator-namespace = strimzi-kafka
+kafka-namespace = strimzi-kafka
 
 # add helm chart repo for Strimzi
 add-repo:
@@ -7,53 +8,81 @@ add-repo:
 	helm repo update
 	
 
-#install it! (I have used strimzi-kafka as the release name)
+# ============================= #
+#           operator            # 
+# ============================= #
+
+
 install-operator:
-#	-kubectl create namespace $(namespace)
-	-kubectl apply -f strimzi.ns.yaml
-# Installation with helm
-# 	helm install -n $(namespace) strimzi-kafka strimzi/strimzi-kafka-operator
-# 	kubectl get pods -l=name=strimzi-cluster-operator
-# 	kubectl get crd | grep strimzi
-# Instalation with kubectl
-	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
-	kubectl wait deployment -n $(namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
+	kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
+	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
+	kubectl wait deployment -n $(operator-namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
 
 uninstall-operator:
-# Uninstalls with helm
-#	helm uninstall -n $(namespace) strimzi-kafka
-# Uninstalls with kubectl
-	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(namespace)' -n $(namespace)
-	-kubectl delete namespace $(namespace)
+	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
+	-kubectl delete -f ./strimzi-kafka-operator/strimzi.ns.yaml
 
 
 
-deploy-kafka-cluster:
-	kubectl apply -n $(namespace) -f ./configuration/kafka
-	kubectl apply -n $(namespace) -f ./configuration/ksql
-	kubectl get kafka -n $(namespace)
-# other deployments as ksql
-	kubectl get Deployment -n $(namespace)
 
-delete-kafka-cluster:
-	-kubectl delete -n $(namespace) -f ./configuration/kafka
-	-kubectl delete -n $(namespace) -f ./configuration/ksql
+
+
+
+# ============================= #
+#         kafka-cluster         # 
+# ============================= #
+
+deploy-kafka-cluster: install-kafka-cluster show-kafka-cluster
+
+install-kafka-cluster:
+#	kubectl apply -f ./configuration/kafka/data-mesh.ns.yaml
+	kubectl apply -n $(kafka-namespace) -f ./configuration/kafka
+	kubectl apply -n $(kafka-namespace) -f ./configuration/monitors/kafka-resources-metrics.yaml
+
+#	kubectl wait kafka -n $(operator-namespace) kafka-cluster --for condition=Available=True --timeout=90s
+	
+
+
+
 
 show-kafka-cluster:
-	-kubectl get pods -n $(namespace)
-	-kubectl get kafka -n $(namespace)
-	-kubectl get services -n $(namespace)
-	-kubectl get Deployment -n $(namespace)
+	-kubectl get pods -n $(kafka-namespace)
+	-kubectl get kafka -n $(kafka-namespace)
+	-kubectl get services -n $(kafka-namespace)
+	-kubectl get Deployment -n $(kafka-namespace)
 
 describe-kafka-cluster:
-	kubectl describe kafka data-mesh -n $(namespace)
+	kubectl describe kafka data-mesh -n $(kafka-namespace)
+	kubectl get Deployment -n $(kafka-namespace)
 
+
+delete-kafka-cluster:
+	-kubectl delete -n $(kafka-namespace) -f ./configuration/kafka
+#	-kubectl delete -f ./configuration/kafka/data-mesh.ns.yaml
+
+
+# ============================= #
+#           others              # 
+# ============================= #
+
+
+install-kafka-tools:
+	kubectl apply -n $(kafka-namespace) -f ./configuration/ksql
+
+remote-kafka-tools:
+	-kubectl delete -n $(kafka-namespace) -f ./configuration/ksql
+
+
+
+# ============================= #
+#           topics              # 
+# ============================= #
 
 create-topics:
-	kubectl apply -f ./topics -n $(namespace)
+	kubectl apply -f ./topics -n $(kafka-namespace)
 
 list-topics:
-	kubectl get kafkatopic -n $(namespace)
+	kubectl get kafkatopic -n $(kafka-namespace)
 
 
 #
@@ -61,11 +90,3 @@ list-topics:
 #... I need to continue here: https://www.infoq.com/articles/strimzi-the-gitops-way/
 #
 #
-
-helm-install: 
-	-kubectl create namespace $(namespace)
-	helm upgrade --install kafka-operator ./strimzi-kafka-operator -n $(namespace) --values ./helm/values.yaml
-
-helm-uninstall: delete-kafka-cluster
-	helm uninstall kafka-ecosystem -n $(namespace)
-	kubectl delete namespace $(namespace)

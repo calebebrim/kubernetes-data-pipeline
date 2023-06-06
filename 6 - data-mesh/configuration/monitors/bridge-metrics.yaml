@@ -4,6 +4,7 @@ metadata:
   name: bridge-metrics
   labels:
     app: strimzi
+    prometheus: main
 spec:
   selector:
     matchLabels:
@@ -11,6 +12,7 @@ spec:
   namespaceSelector:
     matchNames:
       - data-mesh
+      - strimzi-kafka
   podMetricsEndpoints:
   - path: /metrics
     port: rest-api
