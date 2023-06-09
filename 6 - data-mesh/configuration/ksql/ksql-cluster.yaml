@@ -34,6 +34,10 @@ spec:
           value: "1"
         - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR
           value: "1"
+        # Schema Registry Integration
+        - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
+          # TODO: automate with helm
+          value: "schema-registry.data-mesh.svc.cluster.local:8081"
         resources:
           requests:
             cpu: 250m

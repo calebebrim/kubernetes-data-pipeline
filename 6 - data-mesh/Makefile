@@ -1,6 +1,8 @@
 
 operator-namespace = strimzi-kafka
-kafka-namespace = strimzi-kafka
+kafka-namespace = data-mesh
+
+bridge-domain = datamesh.brimdataservices.com.br
 
 # add helm chart repo for Strimzi
 add-repo:
@@ -22,6 +24,9 @@ uninstall-operator:
 	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
 	-kubectl delete -f ./strimzi-kafka-operator/strimzi.ns.yaml
 
+install-operator-helm:
+	-kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
+	helm upgrade --install strimzi-kafka-operator ./strimzi-kafka-operator -n $(operator-namespace) --values ./strimzi-kafka-operator/values.customized.yaml
 
 
 
@@ -35,7 +40,7 @@ uninstall-operator:
 deploy-kafka-cluster: install-kafka-cluster show-kafka-cluster
 
 install-kafka-cluster:
-#	kubectl apply -f ./configuration/kafka/data-mesh.ns.yaml
+	kubectl apply -f ./configuration/kafka/data-mesh.ns.yaml
 	kubectl apply -n $(kafka-namespace) -f ./configuration/kafka
 	kubectl apply -n $(kafka-namespace) -f ./configuration/monitors/kafka-resources-metrics.yaml
 
@@ -66,11 +71,23 @@ delete-kafka-cluster:
 # ============================= #
 
 
-install-kafka-tools:
+install-kafka-tools: install-schema-registry
 	kubectl apply -n $(kafka-namespace) -f ./configuration/ksql
+	kubectl apply -n $(kafka-namespace) -f ./configuration/connect
+	kubectl apply -n $(kafka-namespace) -f ./configuration/bridge
 
-remote-kafka-tools:
+remove-kafka-tools: remove-schema-registry
 	-kubectl delete -n $(kafka-namespace) -f ./configuration/ksql
+	-kubectl delete -n $(kafka-namespace) -f ./configuration/connect
+	-kubectl delete -n $(kafka-namespace) -f ./configuration/bridge
+
+
+install-schema-registry:
+# https://bitnami.com/stack/schema-registry/helm
+	helm upgrade --install schema-registry oci://registry-1.docker.io/bitnamicharts/schema-registry -n $(kafka-namespace) --values ./configuration/schema-registry/schema-registry.bitnami.values.yaml 
+
+remove-schema-registry:
+	-helm delete schema-registry
 
 
 
@@ -83,6 +100,24 @@ create-topics:
 
 list-topics:
 	kubectl get kafkatopic -n $(kafka-namespace)
+
+
+producing-bridge-messages:
+	curl -X POST \
+		--insecure https://$(bridge-domain)/topics/movies \
+		-H 'content-type: application/vnd.kafka.json.v2+json' \
+		-d '{ 
+			"records": [ 
+				{ 
+					"key": "key-1", 
+					"value": "TOP-Gun,10,1989" 
+				}, 
+				{ 
+					"key": "key-2", 
+					"value": "cableguy,5,1988" 
+				} 
+			] 
+		}' 
 
 
 #
