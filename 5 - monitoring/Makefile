@@ -61,5 +61,6 @@ remove-demoapp:
 
 
 
-
+forward-prometheus: 
+	kubectl port-forward pods/prometheus-main-0 9090:9090 -n monitoring
 
