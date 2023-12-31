@@ -24,6 +24,8 @@ uninstall-operator:
 	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
 	-kubectl delete -f ./strimzi-kafka-operator/strimzi.ns.yaml
 
+
+#prefer using helm install
 install-operator-helm:
 	-kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
 	helm upgrade --install strimzi-kafka-operator ./strimzi-kafka-operator -n $(operator-namespace) --values ./strimzi-kafka-operator/values.customized.yaml
@@ -57,7 +59,7 @@ show-kafka-cluster:
 	-kubectl get Deployment -n $(kafka-namespace)
 
 describe-kafka-cluster:
-	kubectl describe kafka data-mesh -n $(kafka-namespace)
+	kubectl describe kafka kafka-cluster -n $(kafka-namespace)
 	kubectl get Deployment -n $(kafka-namespace)
 
 
