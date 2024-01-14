@@ -15,17 +15,17 @@ add-repo:
 # ============================= #
 
 
+#prefer using helm install
 install-operator:
-	kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
-	kubectl create -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
-	kubectl wait deployment -n $(operator-namespace) strimzi-cluster-operator --for condition=Available=True --timeout=90s
+# 	-kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
+	-kubectl create -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
+	kubectl wait deployment -n $(operator-namespace) strimzi-cluster-operator --for condition=Available=True --timeout=120s
 
 uninstall-operator:
 	-kubectl delete -f 'https://strimzi.io/install/latest?namespace=$(operator-namespace)' -n $(operator-namespace)
-	-kubectl delete -f ./strimzi-kafka-operator/strimzi.ns.yaml
+# 	-kubectl delete -f ./strimzi-kafka-operator/strimzi.ns.yaml
 
 
-#prefer using helm install
 install-operator-helm:
 	-kubectl apply -f ./strimzi-kafka-operator/strimzi.ns.yaml
 	helm upgrade --install strimzi-kafka-operator ./strimzi-kafka-operator -n $(operator-namespace) --values ./strimzi-kafka-operator/values.customized.yaml
@@ -41,12 +41,19 @@ install-operator-helm:
 
 deploy-kafka-cluster: install-kafka-cluster show-kafka-cluster
 
+
+create-ns:
+	kubectl apply -f ./configuration/namespace/data-mesh.ns.yaml
+
+delete-ns:
+	kubectl delete -f ./configuration/namespace/data-mesh.ns.yaml
+
 install-kafka-cluster:
-	kubectl apply -f ./configuration/kafka/data-mesh.ns.yaml
+	
 	kubectl apply -n $(kafka-namespace) -f ./configuration/kafka
 	kubectl apply -n $(kafka-namespace) -f ./configuration/monitors/kafka-resources-metrics.yaml
 
-#	kubectl wait kafka -n $(operator-namespace) kafka-cluster --for condition=Available=True --timeout=90s
+	kubectl wait kafka -n $(kafka-namespace) kafka-cluster --for condition=READY=True --timeout=600s
 	
 
 
@@ -75,12 +82,12 @@ delete-kafka-cluster:
 
 install-kafka-tools: install-schema-registry
 	kubectl apply -n $(kafka-namespace) -f ./configuration/ksql
-	kubectl apply -n $(kafka-namespace) -f ./configuration/connect
+# kubectl apply -n $(kafka-namespace) -f ./configuration/connect
 	kubectl apply -n $(kafka-namespace) -f ./configuration/bridge
 
 remove-kafka-tools: remove-schema-registry
 	-kubectl delete -n $(kafka-namespace) -f ./configuration/ksql
-	-kubectl delete -n $(kafka-namespace) -f ./configuration/connect
+# -kubectl delete -n $(kafka-namespace) -f ./configuration/connect
 	-kubectl delete -n $(kafka-namespace) -f ./configuration/bridge
 
 
@@ -127,3 +134,6 @@ producing-bridge-messages:
 #... I need to continue here: https://www.infoq.com/articles/strimzi-the-gitops-way/
 #
 #
+
+
+install: 

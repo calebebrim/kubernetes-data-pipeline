@@ -20,7 +20,7 @@ See __0 - private-registry__ folder for details.
 To deploy a k3d cluster enter on __1-cluster__ and run the following command:
 
 ``` shell
-    make create
+    make create-cluster
 ```
 
 The k3d cli will reuse the already created network and create the kubernetes cluster. 
@@ -28,7 +28,7 @@ The k3d cli will reuse the already created network and create the kubernetes clu
 Just in case you want to deploy the cluster with more than one agent or server, you can use the command with the following parameters:
 
 ``` shell	
-make create agents=3 servers=3
+make create-cluster agents=3 servers=3
 
 ```
 
@@ -46,7 +46,7 @@ make install
 
 if this is not the first time you install nginx ingress on kubernetes server, you can skip the add-repo command make command.
 
-to make sure iginx is installed correctly run the following command:
+to make sure nginx is installed correctly run the following command:
 
 ``` shell	
 kubectl get pods -n default
