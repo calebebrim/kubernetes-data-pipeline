@@ -140,7 +140,7 @@ def create_namespaces():
     
     k8s_resource(
         new_name="namespaces",
-        trigger_mode=TRIGGER_MODE_MANUAL
+        trigger_mode=TRIGGER_MODE_MANUAL,
         objects=[
             "strimzi-kafka:namespace",
             "data-mesh:namespace"
