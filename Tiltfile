@@ -138,7 +138,14 @@ def create_namespaces():
     namespace_create("strimzi-kafka", labels=[{"monitoring":"prometheus"}])
     namespace_create("data-mesh", labels=[{"monitoring":"prometheus"}])
     
-
+    k8s_resource(
+        new_name="namespaces",
+        trigger_mode=TRIGGER_MODE_MANUAL
+        objects=[
+            "strimzi-kafka:namespace",
+            "data-mesh:namespace"
+        ]
+    )
 
 def main():
     setup_registry()
