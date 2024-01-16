@@ -11,8 +11,8 @@ volume-agent-mount-path=/persistent
 
 #cluster config
 cluster-name=development
-servers=2
-agents=2
+servers=1
+agents=1
 http-port=80
 https-port=443
 api-port=6445

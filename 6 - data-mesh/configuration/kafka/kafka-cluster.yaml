@@ -5,7 +5,7 @@ metadata:
 spec:
   kafka:
     version: 3.4.0
-    replicas: 4
+    replicas: 2
     resources: # (4)
       requests:
         memory: 1Gi
@@ -65,7 +65,7 @@ spec:
     jvmOptions:
       -Xms: 200m
       -Xmx: 524m
-    replicas: 3
+    replicas: 1
     readinessProbe:
       initialDelaySeconds: 15
       timeoutSeconds: 5
