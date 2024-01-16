@@ -1,4 +1,4 @@
-FROM quay.io/strimzi/kafka:0.36.0-kafka-3.6.1
+FROM quay.io/strimzi/kafka:latest-kafka-3.6.0
 USER root:root
 COPY ./plugins/ /opt/kafka/plugins/
 USER 1001
