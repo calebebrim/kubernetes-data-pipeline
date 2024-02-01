@@ -56,17 +56,19 @@ def install_strinzi_operator(base = ""):
         name='strimzi-operator',
         cmd=cmd,
         allow_parallel=False, 
+        labels="data-mesh",
         deps=["monitoring-folder"])
 
 def install_kafka_cluster(base = ""):
     cmd = 'cd "{}" && make install-kafka-cluster'.format(base)
     rm = 'cd "{}" && make delete-kafka-cluster'.format(base)
     
-   
+    
     local_resource(
         name='kafka-cluster',
         cmd=cmd,
         allow_parallel=False, 
+        labels="data-mesh",
         deps=["monitoring-folder", "strimzi-operator"])
 
 def install_kafka_tools(base):
@@ -78,6 +80,7 @@ def install_kafka_tools(base):
         name='kafka-tools',
         cmd=cmd,
         allow_parallel=False, 
+        labels="data-mesh",
         deps=["kafka-cluster"])
     
 def install_kafka_connect(base):
@@ -118,10 +121,10 @@ def install_kafka_connect(base):
         objects=["connect-metrics:configmap"],
         trigger_mode=TRIGGER_MODE_MANUAL,
         resource_deps=["kafka-cluster"],
+        labels="data-mesh",
         port_forwards=[
             port_forward(8083,8083, name="kafka-connect-api")
         ]
-
     )
   
 
