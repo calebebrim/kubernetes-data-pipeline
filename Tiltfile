@@ -117,6 +117,7 @@ def install_kafka_connect(base):
         "kafka-connect-cluster",
         objects=["connect-metrics:configmap"],
         trigger_mode=TRIGGER_MODE_MANUAL,
+        resource_deps=["kafka-cluster"],
         port_forwards=[
             port_forward(8083,8083, name="kafka-connect-api")
         ]
