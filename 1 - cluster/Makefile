@@ -56,6 +56,9 @@ jq-install:
 install-binaries: download-folder k3d-install helm-install jq-install
 
 
+
+recreate: remove create
+
 create: create-cluster 
 
 remove: delete-cluster 
@@ -67,6 +70,8 @@ create-mount:
 
 delete-cluster: 
 	k3d cluster delete $(cluster-name)
+
+restart: stop start
 
 stop: 
 	k3d cluster stop $(cluster-name)
