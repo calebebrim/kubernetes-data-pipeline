@@ -652,8 +652,7 @@ kafka:
 externalKafka:
   ## @param externalKafka.brokers Array of Kafka brokers to connect to. Format: protocol://broker_hostname:port
   ##
-  brokers:
-    - PLAINTEXT://kafka-cluster-kafka-bootstrap.data-mesh.svc.cluster.local:9092
+  brokers: "PLAINTEXT://kafka-cluster-kafka-bootstrap.data-mesh.svc.cluster.local:9092"
   ## Authentication parameters
   ## @param externalKafka.auth.protocol                   Authentication protocol. Allowed protocols: plaintext, tls, sasl and sasl_tls
   ## @param externalKafka.auth.jaas.user                  User for SASL authentication
